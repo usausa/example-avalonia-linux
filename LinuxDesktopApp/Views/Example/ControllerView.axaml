@@ -5,12 +5,19 @@
              xmlns:s="http://smart/avalonia"
              xmlns:local="clr-namespace:LinuxDesktopApp.Views.Example"
              xmlns:controls="clr-namespace:LinuxDesktopApp.Controls"
+             xmlns:converters="clr-namespace:LinuxDesktopApp.Converters"
              mc:Ignorable="d"
              x:Class="LinuxDesktopApp.Views.Example.ControllerView"
              x:DataType="local:ControllerViewModel"
              s:DataContextResolver.Type="local:ControllerViewModel"
              d:DesignWidth="1920" d:DesignHeight="960"
              Height="960">
+
+    <UserControl.Resources>
+        <converters:ShiftColorConverter x:Key="ShiftColorConverter"
+                                   ActiveColor="Turquoise"
+                                   InactiveColor="#484D5F" />
+    </UserControl.Resources>
 
     <Grid>
         <controls:SpeedGauge Margin="0,40,0,-40"
@@ -36,12 +43,47 @@
                        FontFamily="{StaticResource Gkktt}" />
         </StackPanel>
 
-        <TextBlock HorizontalAlignment="Left"
-                   VerticalAlignment="Bottom"
-                   Margin="40"
-                   Foreground="White"
-                   FontSize="48"
-                   Text="{Binding Shift, StringFormat={}Shift: {0}}" />
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,120">
+            <TextBlock Text="R"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 0}}" />
+            <TextBlock Text="1"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 1}}" />
+            <TextBlock Text="2"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 2}}" />
+            <TextBlock Text="3"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 3}}" />
+            <TextBlock Text="4"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 4}}" />
+            <TextBlock Text="5"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 5}}" />
+            <TextBlock Text="6"
+                       FontSize="72"
+                       FontWeight="Bold"
+                       Margin="16,0"
+                       Foreground="{Binding Shift, Converter={StaticResource ShiftColorConverter}, ConverterParameter={s:Int32 6}}" />
+        </StackPanel>
+
     </Grid>
 
 </UserControl>

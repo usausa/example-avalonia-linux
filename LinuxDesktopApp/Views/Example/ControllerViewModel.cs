@@ -35,7 +35,7 @@ public sealed partial class ControllerViewModel : AppViewModelBase
     public partial int Fps { get; set; }
 
     [ObservableProperty]
-    public partial int Shift { get; set; }
+    public partial int Shift { get; set; } = 1;
 
     [ObservableProperty]
     public partial int Speed { get; set; }
