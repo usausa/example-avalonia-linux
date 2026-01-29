@@ -35,6 +35,13 @@
                        Text="{Binding Speed}"
                        FontFamily="{StaticResource Gkktt}" />
         </StackPanel>
+
+        <TextBlock HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Margin="40"
+                   Foreground="White"
+                   FontSize="48"
+                   Text="{Binding Shift, StringFormat={}Shift: {0}}" />
     </Grid>
 
 </UserControl>

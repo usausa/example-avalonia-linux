@@ -103,8 +103,8 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             while (await timer.WaitForNextTickAsync(cancellationTokenSource.Token).ConfigureAwait(false))
             {
                 var axis = gamepad.GetAxisValue(0);
-                var accel = gamepad.GetButtonPressed(0); // A
-                var brake = gamepad.GetButtonPressed(1); // B
+                var brake = gamepad.GetButtonPressed(0); // A
+                var accel = gamepad.GetButtonPressed(1); // B
                 var shiftDown = gamepad.GetButtonPressed(2); // X
                 var shiftUp = gamepad.GetButtonPressed(3); // Y
 
