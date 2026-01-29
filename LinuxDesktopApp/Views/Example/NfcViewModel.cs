@@ -12,7 +12,10 @@ public sealed partial class NfcViewModel : AppViewModelBase
     private readonly PaSoRiSuicaReader reader;
 
     [ObservableProperty]
-    public partial string Id { get; set; } = default!;
+    public partial string Id { get; set; } = "-";
+
+    [ObservableProperty]
+    public partial int Balance { get; set; }
 
     public NfcViewModel(
         IDispatcher dispatcher)
@@ -38,7 +41,10 @@ public sealed partial class NfcViewModel : AppViewModelBase
 
     private void ReaderOnCardRead(object? sender, SuicaReadEventArgs e)
     {
-        dispatcher.Post(() => Id = Convert.ToHexString(e.IDm));
-        // TODO
+        dispatcher.Post(() =>
+        {
+            Id = Convert.ToHexString(e.IDm);
+            Balance = e.Balance;
+        });
     }
 }

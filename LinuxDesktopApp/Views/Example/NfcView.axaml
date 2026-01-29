@@ -13,12 +13,20 @@
 
     <Grid RowDefinitions="*">
 
-        <Label Grid.Row="0"
-               Content="{Binding Id}"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               FontSize="72"
-               FontWeight="Bold"/>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label
+                   Content="{Binding Id}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="72"
+                   FontWeight="Bold"/>
+            <Label
+                   Content="{Binding Balance}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="72"
+                   FontWeight="Bold"/>
+        </StackPanel>
 
     </Grid>
 
