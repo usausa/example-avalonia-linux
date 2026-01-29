@@ -314,7 +314,6 @@ public sealed partial class ControllerViewModel : AppViewModelBase
             // - Low gears have high torque at low speeds
             // - As speed increases within the gear, acceleration decreases
             // - Simulates engine torque curve and gearing ratio
-
             double torqueCurve;
             if (gearProgress < 0.3)
             {
