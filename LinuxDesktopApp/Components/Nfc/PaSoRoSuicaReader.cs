@@ -142,17 +142,23 @@ internal sealed class PaSoRiSuicaReader : IDisposable
                     return;
                 }
 
-                records.Add(new SuicaHistoryRecord(
-                    SuicaLogic.ExtractLogDateTime(response.Data),
-                    SuicaLogic.ExtractLogTerminal(response.Data),
-                    SuicaLogic.ExtractLogProcess(response.Data),
-                    SuicaLogic.ExtractLogBalance(response.Data)));
+                var process = SuicaLogic.ExtractLogProcess(response.Data);
+                if (process != 0)
+                {
+                    Console.WriteLine();
+                    records.Add(new SuicaHistoryRecord(
+                        SuicaLogic.ExtractLogDateTime(response.Data),
+                        SuicaLogic.ExtractLogTerminal(response.Data),
+                        process,
+                        SuicaLogic.ExtractLogBalance(response.Data)));
+                }
             }
 
             SuicaRead?.Invoke(this, new SuicaReadEventArgs(idm, balance, records.AsReadOnly()));
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             // Ignore
         }
         finally
