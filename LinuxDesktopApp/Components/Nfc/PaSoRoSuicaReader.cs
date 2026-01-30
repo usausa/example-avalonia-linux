@@ -142,14 +142,13 @@ internal sealed class PaSoRiSuicaReader : IDisposable
                     return;
                 }
 
-                var process = SuicaLogic.ExtractLogProcess(response.Data);
-                if (process != 0)
+                if (SuicaLogic.IsValidLog(response.Data))
                 {
                     Console.WriteLine();
                     records.Add(new SuicaHistoryRecord(
                         SuicaLogic.ExtractLogDateTime(response.Data),
                         SuicaLogic.ExtractLogTerminal(response.Data),
-                        process,
+                        SuicaLogic.ExtractLogProcess(response.Data),
                         SuicaLogic.ExtractLogBalance(response.Data)));
                 }
             }
