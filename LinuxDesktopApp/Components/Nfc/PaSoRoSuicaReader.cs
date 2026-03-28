@@ -27,6 +27,7 @@ public sealed class SuicaHistoryRecord
 #pragma warning disable CA1819
 public sealed class SuicaReadEventArgs : EventArgs
 {
+    // ReSharper disable once InconsistentNaming
     public byte[] IDm { get; }
 
     public int Balance { get; }
