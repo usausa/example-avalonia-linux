@@ -2,6 +2,12 @@ namespace LinuxDesktopApp;
 
 using System.Runtime.InteropServices;
 
+using LinuxDesktopApp.Services;
+using LinuxDesktopApp.Settings;
+using LinuxDesktopApp.Views;
+
+using LinuxDotNet.GameInput;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,12 +16,6 @@ using Serilog;
 
 using Smart.Avalonia;
 using Smart.Resolver;
-
-using LinuxDesktopApp.Settings;
-using LinuxDesktopApp.Services;
-using LinuxDesktopApp.Views;
-
-using LinuxDotNet.GameInput;
 
 public static partial class ApplicationExtensions
 {

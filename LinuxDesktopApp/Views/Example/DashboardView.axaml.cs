@@ -2,9 +2,9 @@ namespace LinuxDesktopApp.Views.Example;
 
 using Avalonia.Controls;
 
-using Smart.Navigation.Attributes;
-
 using LinuxDesktopApp.Views;
+
+using Smart.Navigation.Attributes;
 
 [View(ViewId.Dashboard)]
 public partial class DashboardView : UserControl

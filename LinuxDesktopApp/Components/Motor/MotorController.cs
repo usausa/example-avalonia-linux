@@ -18,8 +18,10 @@ internal sealed class MotorController : IDisposable
 
     public MotorController(string name)
     {
-        port = new SerialPort(name);
-        port.BaudRate = 115200;
+        port = new SerialPort(name)
+        {
+            BaudRate = 115200
+        };
     }
 
     public void Dispose()

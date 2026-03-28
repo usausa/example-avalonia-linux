@@ -46,7 +46,7 @@ public sealed partial class CameraViewModel : AppViewModelBase
     [ObservableProperty]
     public partial WriteableBitmap? Bitmap { get; set; }
 
-    public ObservableCollection<FaceBox> FaceBoxes { get; } = new();
+    public ObservableCollection<FaceBox> FaceBoxes { get; } = [];
 
     [ObservableProperty]
     public partial float Fps { get; set; }
