@@ -229,7 +229,7 @@ internal sealed class PaSoRiSuicaReader : IDisposable
 
         public bool IsSuccess()
         {
-            return SW1 == 0x90 && SW2 == 0x00;
+            return (SW1 == 0x90) && (SW2 == 0x00);
         }
     }
 }

@@ -7,8 +7,10 @@ public static class ImageHelper
 {
     public static unsafe void ConvertYUYV2RGBA(ReadOnlySpan<byte> yuyv, Span<byte> rgba)
     {
+        #pragma warning disable SA1519
         fixed (byte* yuyvPtr = yuyv)
         fixed (byte* rgbaPtr = rgba)
+        #pragma warning restore SA1519
         {
             var src = yuyvPtr;
             var dst = rgbaPtr;

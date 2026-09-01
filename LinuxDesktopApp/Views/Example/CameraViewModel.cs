@@ -253,9 +253,6 @@ public sealed partial class CameraViewModel : AppViewModelBase
         lastGc1Count = gc1Count;
         lastGc2Count = gc2Count;
 
-        static float CalcSmoothValue(float current, float previous)
-        {
-            return (current * Alpha) + (previous * (1.0f - Alpha));
-        }
+        static float CalcSmoothValue(float current, float previous) => (current * Alpha) + (previous * (1.0f - Alpha));
     }
 }
