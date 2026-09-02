@@ -186,6 +186,7 @@ public sealed partial class CameraViewModel : AppViewModelBase
         dispatcher.Post(UpdateBitmap);
     }
 
+    // ReSharper disable once RedundantUnsafeContext
     private unsafe void UpdateBitmap()
     {
         if (IsDisposed || (bufferManager is null))
