@@ -8,8 +8,10 @@ internal sealed class QrReader : IDisposable
 {
     public event Action<string>? QrScanned;
 
+#pragma warning disable IDE0028
     private static readonly byte[] ResumeCommand = "R\r"u8.ToArray();
     private static readonly byte[] PauseCommand = "Z\r"u8.ToArray();
+#pragma warning restore IDE0028
 
     private readonly SerialPort port;
 
