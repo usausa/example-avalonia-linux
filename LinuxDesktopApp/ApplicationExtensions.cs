@@ -2,23 +2,34 @@ namespace LinuxDesktopApp;
 
 using System.Runtime.InteropServices;
 
-using LinuxDesktopApp.Services;
+using BunnyTail.DependencyInjection;
+
 using LinuxDesktopApp.Settings;
 using LinuxDesktopApp.Views;
 
 using LinuxDotNet.GameInput;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 using Serilog;
 
 using Smart.Avalonia;
-using Smart.Resolver;
 
 public static partial class ApplicationExtensions
 {
+    //--------------------------------------------------------------------------------
+    // Container
+    //--------------------------------------------------------------------------------
+
+    public static HostApplicationBuilder ConfigureContainer(this HostApplicationBuilder builder)
+    {
+        builder.ConfigureContainer(new GeneratedServiceProviderFactory(static options => options.TrackTransientDisposables = false));
+
+        return builder;
+    }
+
     //--------------------------------------------------------------------------------
     // Logging
     //--------------------------------------------------------------------------------
@@ -42,64 +53,44 @@ public static partial class ApplicationExtensions
     {
         builder.Services.AddAvaloniaServices();
 
-        builder.ConfigureContainer(new SmartServiceProviderFactory(), x => ConfigureContainer(builder.Configuration, x));
+        // Setting
+        builder.Services.AddOptions<ControllerSetting>().BindConfiguration("Controller").ValidateDataAnnotations().ValidateOnStart();
+        builder.Services.AddSingleton(static p => p.GetRequiredService<IOptions<ControllerSetting>>().Value);
+        builder.Services.AddOptions<MotorSetting>().BindConfiguration("Motor").ValidateDataAnnotations().ValidateOnStart();
+        builder.Services.AddSingleton(static p => p.GetRequiredService<IOptions<MotorSetting>>().Value);
+        builder.Services.AddOptions<BarcodeSetting>().BindConfiguration("Barcode").ValidateDataAnnotations().ValidateOnStart();
+        builder.Services.AddSingleton(static p => p.GetRequiredService<IOptions<BarcodeSetting>>().Value);
+        builder.Services.AddOptions<CameraSetting>().BindConfiguration("Camera").ValidateDataAnnotations().ValidateOnStart();
+        builder.Services.AddSingleton(static p => p.GetRequiredService<IOptions<CameraSetting>>().Value);
+        builder.Services.AddOptions<DetectSetting>().BindConfiguration("Detect").ValidateDataAnnotations().ValidateOnStart();
+        builder.Services.AddSingleton(static p => p.GetRequiredService<IOptions<DetectSetting>>().Value);
+        builder.Services.AddOptions<PrinterSetting>().BindConfiguration("Printer").ValidateDataAnnotations().ValidateOnStart();
+        builder.Services.AddSingleton(static p => p.GetRequiredService<IOptions<PrinterSetting>>().Value);
+
+        // Messenger
+        builder.Services.AddSingleton<IReactiveMessenger>(ReactiveMessenger.Default);
+
+        // Navigation
+        builder.Services.AddNavigator(static (_, config) =>
+        {
+            config.UseAvaloniaNavigationProvider();
+            config.UseIdViewMapper(static m => m.AutoRegister(ViewSource()));
+        });
+
+        // Service
+        builder.Services.AddServices();
+
+        // Components
+        builder.Services.AddSingleton(static _ => new GameController());
+
+        // Window
+        builder.Services.AddSingleton<MainWindow>();
+        // View & ViewModel
+        builder.Services.AddViews();
+        builder.Services.AddViewModels();
 
         return builder;
     }
-
-    private static void ConfigureContainer(ConfigurationManager configuration, ResolverConfig config)
-    {
-        config
-            .UseAutoBinding()
-            .UseArrayBinding()
-            .UseAssignableBinding();
-
-        // Messenger
-        config.BindSingleton<IReactiveMessenger>(ReactiveMessenger.Default);
-
-        // Navigation
-        config.BindSingleton<Navigator>(resolver =>
-        {
-            var navigator = new NavigatorConfig()
-                .UseAvaloniaNavigationProvider()
-                .UseServiceProvider(resolver)
-                .UseIdViewMapper(static m => m.AutoRegister(ViewSource()))
-                .ToNavigator();
-#if DEBUG
-            navigator.Navigated += (_, args) =>
-            {
-                // for debug
-                System.Diagnostics.Debug.WriteLine($"Navigated: [{args.Context.FromId}]->[{args.Context.ToId}] : stacked=[{navigator.StackedCount}]");
-            };
-#endif
-
-            return navigator;
-        });
-
-        // Setting
-        config.BindConfig<ControllerSetting>(configuration.GetSection("Controller"));
-        config.BindConfig<MotorSetting>(configuration.GetSection("Motor"));
-        config.BindConfig<BarcodeSetting>(configuration.GetSection("Barcode"));
-        config.BindConfig<CameraSetting>(configuration.GetSection("Camera"));
-        config.BindConfig<DetectSetting>(configuration.GetSection("Detect"));
-        config.BindConfig<PrinterSetting>(configuration.GetSection("Printer"));
-
-        // Services
-        config.BindSingleton<DataService>();
-
-        // Components
-        config.BindSingleton(_ => new GameController());
-
-        // Window
-        config.BindSingleton<MainWindow>();
-    }
-
-    //--------------------------------------------------------------------------------
-    // Navigation
-    //--------------------------------------------------------------------------------
-
-    [ViewSource]
-    public static partial IEnumerable<KeyValuePair<ViewId, Type>> ViewSource();
 
     //--------------------------------------------------------------------------------
     // Startup
@@ -123,7 +114,7 @@ public static partial class ApplicationExtensions
         log.InfoStartupEnvironment(environment.EnvironmentName, environment.ContentRootPath);
 
         // Navigate to view
-        var navigator = host.Services.GetRequiredService<Navigator>();
+        var navigator = host.Services.GetRequiredService<INavigator>();
         await navigator.ForwardAsync(ViewId.Dashboard).ConfigureAwait(false);
     }
 
@@ -133,4 +124,28 @@ public static partial class ApplicationExtensions
         await host.StopAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
         host.Dispose();
     }
+
+    //--------------------------------------------------------------------------------
+    // Navigation
+    //--------------------------------------------------------------------------------
+
+    [ViewSource]
+    public static partial IEnumerable<KeyValuePair<ViewId, Type>> ViewSource();
+
+    //--------------------------------------------------------------------------------
+    // Service
+    //--------------------------------------------------------------------------------
+
+    [ComponentRegistration(Lifetime.Singleton, "Service$")]
+    public static partial IServiceCollection AddServices(this IServiceCollection services);
+
+    //--------------------------------------------------------------------------------
+    // View & ViewModel
+    //--------------------------------------------------------------------------------
+
+    [ComponentRegistration(Lifetime.Transient, "View$")]
+    public static partial IServiceCollection AddViews(this IServiceCollection services);
+
+    [ComponentRegistration(Lifetime.Transient, "ViewModel$")]
+    public static partial IServiceCollection AddViewModels(this IServiceCollection services);
 }

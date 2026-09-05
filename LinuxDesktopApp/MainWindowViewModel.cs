@@ -26,14 +26,14 @@ public class MainWindowViewModel : ExtendViewModelBase
 
     private readonly GameController controller;
 
-    public Navigator Navigator { get; set; }
+    public INavigator Navigator { get; set; }
 
     public IObserveCommand ForwardCommand { get; }
 
     public MainWindowViewModel(
         IDispatcher dispatcher,
         ControllerSetting controllerSetting,
-        Navigator navigator,
+        INavigator navigator,
         GameController controller)
     {
         this.dispatcher = dispatcher;

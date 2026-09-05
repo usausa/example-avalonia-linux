@@ -21,11 +21,50 @@ public partial class App : Application
         this.AttachDeveloperTools();
 #endif
 
-        host = Host.CreateApplicationBuilder()
-            .ConfigureLogging()
-            .ConfigureComponents()
-            .Build();
+        host = CreateHost();
+
         ResolveProvider.Default.Provider = host.Services;
+
+        // Exception hook
+        var log = host.Services.GetRequiredService<ILogger<App>>();
+        AppDomain.CurrentDomain.UnhandledException += (_, args) => log.ErrorUnknownException((Exception)args.ExceptionObject);
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            log.ErrorUnknownException(args.Exception);
+            args.SetObserved();
+        };
+    }
+
+    private static IHost CreateHost()
+    {
+        var builder = Host.CreateApplicationBuilder();
+
+        // Container
+        builder.ConfigureContainer();
+        // Log
+        builder.ConfigureLogging();
+        // Components
+        builder.ConfigureComponents();
+
+        var host = builder.Build();
+#if DEBUG
+        if (host.Services is BunnyTail.DependencyInjection.GeneratedServiceProvider generatedProvider)
+        {
+            foreach (var line in BunnyTail.DependencyInjection.Diagnostics.ServiceFactoryReportExtensions.DescribeRuntimeFallbacks(generatedProvider).Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+            {
+                System.Diagnostics.Debug.WriteLine(line);
+            }
+        }
+
+        // Setup navigator
+        var navigator = host.Services.GetRequiredService<INavigator>();
+        navigator.Navigated += (_, args) =>
+        {
+            // for debug
+            System.Diagnostics.Debug.WriteLine($"Navigated: [{args.Context.FromId}]->[{args.Context.ToId}] : stacked=[{navigator.StackedCount}]");
+        };
+#endif
+        return host;
     }
 
     // ReSharper disable once AsyncVoidMethod
